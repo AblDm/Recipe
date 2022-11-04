@@ -1,12 +1,13 @@
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public class Recipe {
 
 
     private final String nameOfRecipe;
-    private final Set<Product> products = new HashSet<Product> ();
+    //private final Set<Product> products = new HashSet<Product> ();
+    private final Map<Product, Integer> products = new HashMap<> ();
     private double totalCostRecipe;
 
     public Recipe(String nameOfRecipe) {
@@ -25,12 +26,23 @@ public class Recipe {
     }
 
     public void addProductToRecipe(Product product, double requiredQuantity){
-        if (products.contains (product)){
-            throw new RuntimeException ("Продукт уже добавлен в рецепт");
+        if (products.containsKey (product)) {
+            throw new RuntimeException ("Что то не так");
         }
-        products.add(product);
+        products.put (product, (int) requiredQuantity);
+
         totalCostRecipe = totalCostRecipe + product.getCount ()*requiredQuantity;
     }
+
+    public int getCostForProduct () {
+        int sum = 0;
+        for ( var key : products.keySet ()){
+
+            sum += products.get (key) * key.getPrise ();
+        }
+        return sum;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -45,9 +57,7 @@ public class Recipe {
         return Objects.hash (nameOfRecipe, products, totalCostRecipe);
     }
 
-    public Set<Product> getProducts() {
-        return products;
-    }
+
 
     public String getNameOfRecipe() {
         return nameOfRecipe;
